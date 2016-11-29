@@ -32,8 +32,8 @@ stream
 ### Bugfixes
 
 - [#1045](https://github.com/influxdata/kapacitor/issues/1045): Fix panic during replays.
-
 - [#1043](https://github.com/influxdata/kapacitor/issues/1043): logrotate.d ignores kapacitor configuration due to bad file mode
+- [#1068](https://github.com/influxdata/kapacitor/issues/1068): Fix dot view syntax to use xlabels and not create invalid quotes.
 
 
 ## v1.1.0 [2016-10-07]
