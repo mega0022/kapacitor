@@ -7,6 +7,7 @@
 ### Features
 
 - [#1159](https://github.com/influxdata/kapacitor/pulls/1159): Go version 1.7.4 -> 1.7.5
+- [#1162](https://github.com/influxdata/kapacitor/pulls/1162): Add Pushover integration.
 
 ### Bugfixes
 

@@ -21,6 +21,7 @@ import (
 	"github.com/influxdata/kapacitor/services/hipchat"
 	"github.com/influxdata/kapacitor/services/opsgenie"
 	"github.com/influxdata/kapacitor/services/pagerduty"
+	"github.com/influxdata/kapacitor/services/pushover"
 	"github.com/influxdata/kapacitor/services/slack"
 	"github.com/influxdata/kapacitor/services/smtp"
 	"github.com/influxdata/kapacitor/services/snmptrap"
@@ -322,6 +323,33 @@ func newAlertNode(et *ExecutingTask, n *pipeline.AlertNode, l *log.Logger) (an *
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to create Alerta handler")
 		}
+		an.handlers = append(an.handlers, h)
+	}
+
+	for _, p := range n.PushoverHandlers {
+		c := pushover.HandlerConfig{}
+		if p.User != "" {
+			c.User = p.User
+		}
+		if p.Device != "" {
+			c.Device = p.Device
+		}
+		if p.Title != "" {
+			c.Title = p.Title
+		}
+		if p.URL != "" {
+			c.URL = p.URL
+		}
+		if p.URLTitle != "" {
+			c.URLTitle = p.URLTitle
+		}
+		if p.Sound != "" {
+			c.Sound = p.Sound
+		}
+		if p.Timestamp {
+			c.Timestamp = p.Timestamp
+		}
+		h := et.tm.PushoverService.Handler(c, l)
 		an.handlers = append(an.handlers, h)
 	}
 
