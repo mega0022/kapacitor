@@ -20,6 +20,7 @@ import (
 
 const (
 	statAverageExecTime = "avg_exec_time_ns"
+	statErrorCount      = "error_count"
 )
 
 // A node that can be  in an executor.
@@ -58,6 +59,9 @@ type Node interface {
 	collectedCount() int64
 
 	emittedCount() int64
+
+	// TODO: Better name
+	incrementErrorCount()
 
 	stats() map[string]interface{}
 }
@@ -101,7 +105,9 @@ func (n *node) init() {
 	}
 	n.statsKey, n.statMap = vars.NewStatistic("nodes", tags)
 	avgExecVar := &MaxDuration{}
+	errCountVar := &kexpvar.Int{}
 	n.statMap.Set(statAverageExecTime, avgExecVar)
+	n.statMap.Set(statErrorCount, errCountVar)
 	n.timer = n.et.tm.TimingService.NewTimer(avgExecVar)
 	n.errCh = make(chan error, 1)
 }
@@ -274,6 +280,11 @@ func (n *node) emittedCount() (count int64) {
 		count += out.collectedCount()
 	}
 	return
+}
+
+// node increment error count increments a nodes error_count stat
+func (n *node) incrementErrorCount() {
+	n.statMap.Add(statErrorCount, 1)
 }
 
 func (n *node) stats() map[string]interface{} {
