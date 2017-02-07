@@ -306,6 +306,7 @@ func (b *QueryNode) doQuery() error {
 			resp, err := con.Query(q)
 			if err != nil {
 				b.queryErrors.Add(1)
+				b.incrementErrorCount()
 				b.logger.Println("E!", err)
 				b.timer.Stop()
 				break
@@ -315,6 +316,7 @@ func (b *QueryNode) doQuery() error {
 			for _, res := range resp.Results {
 				batches, err := models.ResultToBatches(res, b.byName)
 				if err != nil {
+					b.incrementErrorCount()
 					b.logger.Println("E! failed to understand query result:", err)
 					b.queryErrors.Add(1)
 					continue
