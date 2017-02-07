@@ -20,7 +20,7 @@ import (
 
 const (
 	statAverageExecTime = "avg_exec_time_ns"
-	statErrorCount      = "error_count"
+	statErrorCount      = "errors"
 )
 
 // A node that can be  in an executor.
