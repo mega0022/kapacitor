@@ -83,6 +83,7 @@ func (k *K8sAutoscaleNode) runAutoscale([]byte) error {
 			k.timer.Start()
 			if np, err := k.handlePoint(p.Name, p.Group, p.Dimensions, p.Time, p.Fields, p.Tags); err != nil {
 				errorsCount.Add(1)
+				k.incrementErrorCount()
 				k.logger.Println("E!", err)
 			} else if np.Name != "" {
 				k.timer.Pause()
@@ -102,6 +103,7 @@ func (k *K8sAutoscaleNode) runAutoscale([]byte) error {
 			for _, p := range b.Points {
 				if np, err := k.handlePoint(b.Name, b.Group, b.PointDimensions(), p.Time, p.Fields, p.Tags); err != nil {
 					errorsCount.Add(1)
+					k.incrementErrorCount()
 					k.logger.Println("E!", err)
 				} else if np.Name != "" {
 					k.timer.Pause()
