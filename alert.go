@@ -704,11 +704,13 @@ func (a *AlertNode) restoreEventState(id string) alert.Level {
 		if anonFound && topicFound {
 			// Anon topic takes precedence
 			if err := a.et.tm.AlertService.UpdateEvent(a.topic, anonTopicState); err != nil {
+				a.incrementErrorCount()
 				a.logger.Printf("E! failed to update topic %q event state for event %q", a.topic, id)
 			}
 		} else if topicFound && a.hasAnonTopic() {
 			// Update event state for topic
 			if err := a.et.tm.AlertService.UpdateEvent(a.anonTopic, topicState); err != nil {
+				a.incrementErrorCount()
 				a.logger.Printf("E! failed to update topic %q event state for event %q", a.topic, id)
 			}
 		} // else nothing was found, nothing to do
@@ -739,6 +741,7 @@ func (a *AlertNode) handleEvent(event alert.Event) {
 		err := a.et.tm.AlertService.Collect(event)
 		if err != nil {
 			a.eventsDropped.Add(1)
+			a.incrementErrorCount()
 			a.logger.Println("E!", err)
 		}
 	}
@@ -749,6 +752,7 @@ func (a *AlertNode) handleEvent(event alert.Event) {
 		err := a.et.tm.AlertService.Collect(event)
 		if err != nil {
 			a.eventsDropped.Add(1)
+			a.incrementErrorCount()
 			a.logger.Println("E!", err)
 		}
 	}
@@ -760,6 +764,7 @@ func (a *AlertNode) determineLevel(now time.Time, fields models.Fields, tags map
 	}
 	if rse := a.levelResets[currentLevel]; rse != nil {
 		if pass, err := EvalPredicate(rse, a.lrScopePools[currentLevel], now, fields, tags); err != nil {
+			a.incrementErrorCount()
 			a.logger.Printf("E! error evaluating reset expression for current level %v: %s", currentLevel, err)
 		} else if !pass {
 			return currentLevel
@@ -781,6 +786,7 @@ func (a *AlertNode) findFirstMatchLevel(start alert.Level, stop alert.Level, now
 			continue
 		}
 		if pass, err := EvalPredicate(se, a.scopePools[l], now, fields, tags); err != nil {
+			a.incrementErrorCount()
 			a.logger.Printf("E! error evaluating expression for level %v: %s", alert.Level(l), err)
 			continue
 		} else if pass {

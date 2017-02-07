@@ -208,6 +208,7 @@ Add the following snippet to the `service.go` file.
 // Handle takes an event and posts its message to the Foo service chat room.
 func (h *handler) Handle(event alert.Event) {
 	if err := h.s.Alert(h.c.Room, event.State.Message); err != nil {
+		h.incrementErrorCount()
 		h.logger.Println("E! failed to handle event", err)
 	}
 }
