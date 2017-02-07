@@ -17,7 +17,7 @@ import (
 const (
 	statsK8sIncreaseEventsCount = "increase_events"
 	statsK8sDecreaseEventsCount = "decrease_events"
-	statsK8sErrorsCount         = "errors"
+	statsK8sErrorsCount         = "k8s_errors"
 	statsK8sCooldownDropsCount  = "cooldown_drops"
 )
 
