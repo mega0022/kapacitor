@@ -277,6 +277,7 @@ func (j *JoinNode) getGroup(p models.PointInterface, groupErrs chan<- error) *gr
 		go func() {
 			err := group.run()
 			if err != nil {
+				j.incrementErrorCount()
 				j.logger.Println("E! join group error:", err)
 				select {
 				case groupErrs <- err:
@@ -599,6 +600,8 @@ BATCH_POINT:
 			}
 			b, ok := batch.(models.Batch)
 			if !ok {
+				// TODO: determine what to do here. No reference to node is available, but
+				//       a possible error case exists. cant make call to incrementErrorCount
 				js.logger.Printf("E! invalid join data got %T expected models.Batch", batch)
 				return models.Batch{}, false
 			}
