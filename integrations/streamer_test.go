@@ -7035,7 +7035,7 @@ stream
 			.URL('http://example.com')
 			.URLTitle('myurltitle')
 		.pushover()
-			.user('otheruser')
+			.userKey('otheruser')
 			.title('othertitle')
 			.device('otherdev')
 `
@@ -7043,7 +7043,7 @@ stream
 		c := pushover.NewConfig()
 		c.Enabled = true
 		c.URL = ts.URL
-		c.User = "user"
+		c.UserKey = "user"
 		c.Token = "KzGDORePKggMaC0QOYAMyEEuzJnyUi"
 		sl := pushover.NewService(c, logService.NewLogger("[test_pushover] ", log.LstdFlags))
 		tm.PushoverService = sl
@@ -7054,7 +7054,7 @@ stream
 		pushovertest.Request{
 			PostData: pushovertest.PostData{
 				Token:    "KzGDORePKggMaC0QOYAMyEEuzJnyUi",
-				User:     "user",
+				UserKey:  "user",
 				Message:  "kapacitor/cpu/serverA is CRITICAL @1971-01-01 00:00:10 +0000 UTC",
 				Device:   "mydev",
 				Sound:    "siren",
@@ -7067,7 +7067,7 @@ stream
 		pushovertest.Request{
 			PostData: pushovertest.PostData{
 				Token:    "KzGDORePKggMaC0QOYAMyEEuzJnyUi",
-				User:     "otheruser",
+				UserKey:  "otheruser",
 				Message:  "kapacitor/cpu/serverA is CRITICAL @1971-01-01 00:00:10 +0000 UTC",
 				Device:   "otherdev",
 				Title:    "othertitle",

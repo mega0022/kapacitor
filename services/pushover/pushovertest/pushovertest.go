@@ -52,7 +52,7 @@ type Request struct {
 
 type PostData struct {
 	Token    string
-	User     string
+	UserKey  string
 	Message  string
 	Device   string
 	Title    string
@@ -66,7 +66,7 @@ func NewPostData(v url.Values) (PostData, error) {
 	p := PostData{}
 
 	p.Token = v.Get("token")
-	p.User = v.Get("user")
+	p.UserKey = v.Get("user")
 	p.Message = v.Get("message")
 	p.Device = v.Get("device")
 	p.Title = v.Get("title")

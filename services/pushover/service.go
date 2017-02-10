@@ -49,7 +49,7 @@ func (s *Service) Update(newConfig []interface{}) error {
 }
 
 type testOptions struct {
-	User     string      `json:"user"`
+	UserKey  string      `json:"user_key"`
 	Message  string      `json:"message"`
 	Device   string      `json:"device"`
 	Title    string      `json:"title"`
@@ -62,7 +62,7 @@ type testOptions struct {
 func (s *Service) TestOptions() interface{} {
 	c := s.config()
 	return &testOptions{
-		User:    c.User,
+		UserKey: c.UserKey,
 		Message: "test pushover message",
 		Level:   alert.Critical,
 	}
@@ -75,7 +75,7 @@ func (s *Service) Test(options interface{}) error {
 	}
 
 	return s.Alert(
-		o.User,
+		o.UserKey,
 		o.Message,
 		o.Device,
 		o.Title,
@@ -142,7 +142,7 @@ func priority(level alert.Level) int {
 
 type postData struct {
 	Token    string
-	User     string
+	UserKey  string
 	Message  string
 	Device   string
 	Title    string
@@ -156,7 +156,7 @@ func (p *postData) Values() url.Values {
 	v := url.Values{}
 
 	v.Set("token", p.Token)
-	v.Set("user", p.User)
+	v.Set("user", p.UserKey)
 	v.Set("message", p.Message)
 	v.Set("priority", strconv.Itoa(p.Priority))
 
@@ -193,12 +193,12 @@ func (s *Service) preparePost(user, message, device, title, URL, URLTitle, sound
 
 	p := postData{
 		Token:   c.Token,
-		User:    c.User,
+		UserKey: c.UserKey,
 		Message: message,
 	}
 
 	if user != "" {
-		p.User = user
+		p.UserKey = user
 	}
 
 	p.Device = device
@@ -217,7 +217,7 @@ type HandlerConfig struct {
 	// into the Pushover dashboard. Often referred to as USER_KEY
 	// in the Pushover documentation.
 	// If empty uses the user from the configuration.
-	User string `mapstructure:"user"`
+	UserKey string `mapstructure:"user_key"`
 
 	// Users device name to send message directly to that device,
 	// rather than all of a user's devices (multiple device names may
@@ -236,10 +236,6 @@ type HandlerConfig struct {
 	// The name of one of the sounds supported by the device clients to override
 	// the user's default sound choice
 	Sound string `mapstructure:"sound"`
-
-	// A Unix timestamp of your message's date and time to display to the user,
-	// rather than the time your message is received by the Pushover API
-	Timestamp bool `mapstructure:"timestamp"`
 }
 
 type handler struct {
@@ -258,7 +254,7 @@ func (s *Service) Handler(c HandlerConfig, l *log.Logger) alert.Handler {
 
 func (h *handler) Handle(event alert.Event) {
 	if err := h.s.Alert(
-		h.c.User,
+		h.c.UserKey,
 		event.State.Message,
 		h.c.Device,
 		h.c.Title,

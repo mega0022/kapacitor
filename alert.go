@@ -328,8 +328,8 @@ func newAlertNode(et *ExecutingTask, n *pipeline.AlertNode, l *log.Logger) (an *
 
 	for _, p := range n.PushoverHandlers {
 		c := pushover.HandlerConfig{}
-		if p.User != "" {
-			c.User = p.User
+		if p.UserKey != "" {
+			c.UserKey = p.UserKey
 		}
 		if p.Device != "" {
 			c.Device = p.Device
@@ -345,9 +345,6 @@ func newAlertNode(et *ExecutingTask, n *pipeline.AlertNode, l *log.Logger) (an *
 		}
 		if p.Sound != "" {
 			c.Sound = p.Sound
-		}
-		if p.Timestamp {
-			c.Timestamp = p.Timestamp
 		}
 		h := et.tm.PushoverService.Handler(c, l)
 		an.handlers = append(an.handlers, h)

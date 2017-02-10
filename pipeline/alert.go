@@ -983,19 +983,18 @@ type SensuHandler struct {
 //    [pushover]
 //      enabled = true
 //      token = "9hiWoDOZ9IbmHsOTeST123ABciWTIqXQVFDo63h9"
-//      user = "Pushover"
+//      user_key = "Pushover"
 //
 // Example:
 //    stream
 //         |alert()
 //             .pushover()
 //              .sound('siren')
-//              .user('other user')
+//              .user_key('other user')
 //              .device('mydev')
 //              .title('mytitle')
 //              .URL('myurl')
 //              .URLTitle('mytitle')
-//              .timestamp(TRUE)
 //
 // Send alerts to Pushover.
 //
@@ -1016,7 +1015,7 @@ type PushoverHandler struct {
 	// into the Pushover dashboard. Often referred to as USER_KEY
 	// in the Pushover documentation.
 	// If empty uses the user from the configuration.
-	User string
+	UserKey string
 
 	// Users device name to send message directly to that device,
 	// rather than all of a user's devices (multiple device names may
@@ -1035,10 +1034,6 @@ type PushoverHandler struct {
 	// The name of one of the sounds supported by the device clients to override
 	// the user's default sound choice
 	Sound string
-
-	// A Unix timestamp of your message's date and time to display to the user,
-	// rather than the time your message is received by the Pushover API
-	Timestamp bool
 }
 
 // Send the alert to Slack.

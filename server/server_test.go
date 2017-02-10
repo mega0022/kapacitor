@@ -5492,10 +5492,10 @@ func TestServer_UpdateConfig(t *testing.T) {
 				Elements: []client.ConfigElement{{
 					Link: client.Link{Relation: client.Self, Href: "/kapacitor/v1/config/pushover/"},
 					Options: map[string]interface{}{
-						"enabled": false,
-						"user":    "",
-						"token":   false,
-						"url":     "http://pushover.example.com",
+						"enabled":  false,
+						"user_key": "",
+						"token":    false,
+						"url":      "http://pushover.example.com",
 					},
 					Redacted: []string{
 						"token",
@@ -5505,10 +5505,10 @@ func TestServer_UpdateConfig(t *testing.T) {
 			expDefaultElement: client.ConfigElement{
 				Link: client.Link{Relation: client.Self, Href: "/kapacitor/v1/config/pushover/"},
 				Options: map[string]interface{}{
-					"enabled": false,
-					"user":    "",
-					"token":   false,
-					"url":     "http://pushover.example.com",
+					"enabled":  false,
+					"user_key": "",
+					"token":    false,
+					"url":      "http://pushover.example.com",
 				},
 				Redacted: []string{
 					"token",
@@ -5518,8 +5518,8 @@ func TestServer_UpdateConfig(t *testing.T) {
 				{
 					updateAction: client.ConfigUpdateAction{
 						Set: map[string]interface{}{
-							"token": "token",
-							"user":  "kapacitor",
+							"token":    "token",
+							"user_key": "kapacitor",
 						},
 					},
 					expSection: client.ConfigSection{
@@ -5527,10 +5527,10 @@ func TestServer_UpdateConfig(t *testing.T) {
 						Elements: []client.ConfigElement{{
 							Link: client.Link{Relation: client.Self, Href: "/kapacitor/v1/config/pushover/"},
 							Options: map[string]interface{}{
-								"enabled": false,
-								"user":    "kapacitor",
-								"token":   true,
-								"url":     "http://pushover.example.com",
+								"enabled":  false,
+								"user_key": "kapacitor",
+								"token":    true,
+								"url":      "http://pushover.example.com",
 							},
 							Redacted: []string{
 								"token",
@@ -5540,10 +5540,10 @@ func TestServer_UpdateConfig(t *testing.T) {
 					expElement: client.ConfigElement{
 						Link: client.Link{Relation: client.Self, Href: "/kapacitor/v1/config/pushover/"},
 						Options: map[string]interface{}{
-							"enabled": false,
-							"user":    "kapacitor",
-							"token":   true,
-							"url":     "http://pushover.example.com",
+							"enabled":  false,
+							"user_key": "kapacitor",
+							"token":    true,
+							"url":      "http://pushover.example.com",
 						},
 						Redacted: []string{
 							"token",
@@ -6591,7 +6591,7 @@ func TestServer_ListServiceTests(t *testing.T) {
 				Link: client.Link{Relation: client.Self, Href: "/kapacitor/v1/service-tests/pushover"},
 				Name: "pushover",
 				Options: client.ServiceTestOptions{
-					"user":      "",
+					"user_key":  "",
 					"message":   "test pushover message",
 					"device":    "",
 					"title":     "",
@@ -7403,7 +7403,7 @@ func TestServer_AlertHandlers(t *testing.T) {
 			handlerAction: client.HandlerAction{
 				Kind: "pushover",
 				Options: map[string]interface{}{
-					"user": "user",
+					"user_key": "user",
 				},
 			},
 			setup: func(c *server.Config, ha *client.HandlerAction) (context.Context, error) {
@@ -7413,7 +7413,7 @@ func TestServer_AlertHandlers(t *testing.T) {
 				c.Pushover.Enabled = true
 				c.Pushover.URL = ts.URL
 				c.Pushover.Token = "api_key"
-				c.Pushover.User = "user"
+				c.Pushover.UserKey = "user"
 				return ctxt, nil
 			},
 			result: func(ctxt context.Context) error {
@@ -7423,7 +7423,7 @@ func TestServer_AlertHandlers(t *testing.T) {
 				exp := []pushovertest.Request{{
 					PostData: pushovertest.PostData{
 						Token:    "api_key",
-						User:     "user",
+						UserKey:  "user",
 						Message:  "message",
 						Priority: 1,
 					},

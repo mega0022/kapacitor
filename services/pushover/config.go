@@ -16,7 +16,7 @@ type Config struct {
 	// The Pushover API token.
 	Token string `toml:"token" override:"token,redact"`
 	// The User/Group that will be alerted.
-	User string `toml:"user" override:"user"`
+	UserKey string `toml:"user_key" override:"user_key"`
 	// The URL for the Pushover API.
 	// Default: DefaultPushoverAPI
 	URL string `toml:"url" override:"url"`
@@ -39,8 +39,8 @@ func (c Config) Validate() error {
 			return errors.New("must specify token")
 		}
 
-		if c.User == "" {
-			return errors.New("must specify user")
+		if c.UserKey == "" {
+			return errors.New("must specify user key")
 		}
 
 		if c.URL == "" {
