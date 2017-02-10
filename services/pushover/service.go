@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync/atomic"
 
 	"github.com/influxdata/kapacitor/alert"
@@ -106,10 +107,17 @@ func (s *Service) Alert(user, message, device, title, URL, URLTitle, sound strin
 		if err != nil {
 			return err
 		}
+		pushoverResponse := struct {
+			Errors []string `json:"errors"`
+		}{}
+		err = json.Unmarshal(body, pushoverResponse)
+		if err != nil {
+			return err
+		}
 		type response struct {
 			Error string `json:"error"`
 		}
-		r := &response{Error: fmt.Sprintf("failed to understand Pushover response. code: %d content: %s", resp.StatusCode, string(body))}
+		r := &response{Error: fmt.Sprintf("failed to understand Pushover response. code: %d content: %s", resp.StatusCode, strings.Join(pushoverResponse.Errors, ", "))}
 		b := bytes.NewReader(body)
 		dec := json.NewDecoder(b)
 		dec.Decode(r)
