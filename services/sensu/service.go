@@ -78,12 +78,12 @@ func (s *Service) Test(options interface{}) error {
 	)
 }
 
-func (s *Service) Alert(name, output string, level alert.Level) error {
+func (s *Service) Alert(name, source, output string, level alert.Level) error {
 	if !validNamePattern.MatchString(name) {
 		return fmt.Errorf("invalid name %q for sensu alert. Must match %v", name, validNamePattern)
 	}
 
-	addr, postData, err := s.prepareData(name, output, level)
+	addr, postData, err := s.prepareData(name, source, output, level)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (s *Service) Alert(name, output string, level alert.Level) error {
 	return nil
 }
 
-func (s *Service) prepareData(name, output string, level alert.Level) (*net.TCPAddr, map[string]interface{}, error) {
+func (s *Service) prepareData(name, source, output string, level alert.Level) (*net.TCPAddr, map[string]interface{}, error) {
 
 	c := s.config()
 
@@ -133,7 +133,10 @@ func (s *Service) prepareData(name, output string, level alert.Level) (*net.TCPA
 
 	postData := make(map[string]interface{})
 	postData["name"] = name
-	postData["source"] = c.Source
+	if source == "" {
+		source = c.Source
+	}
+	postData["source"] = source
 	postData["output"] = output
 	postData["status"] = status
 
@@ -145,14 +148,22 @@ func (s *Service) prepareData(name, output string, level alert.Level) (*net.TCPA
 	return addr, postData, nil
 }
 
+type HandlerConfig struct {
+	// Sensu source for which to post messages.
+	// If empty uses the source from the configuration.
+	Source string `mapstructure:"source"`
+}
+
 type handler struct {
 	s      *Service
+	c      HandlerConfig
 	logger *log.Logger
 }
 
-func (s *Service) Handler(l *log.Logger) alert.Handler {
+func (s *Service) Handler(c HandlerConfig, l *log.Logger) alert.Handler {
 	return &handler{
 		s:      s,
+		c:      c,
 		logger: l,
 	}
 }
@@ -160,6 +171,7 @@ func (s *Service) Handler(l *log.Logger) alert.Handler {
 func (h *handler) Handle(event alert.Event) {
 	if err := h.s.Alert(
 		event.State.ID,
+		h.c.Source,
 		event.State.Message,
 		event.State.Level,
 	); err != nil {
