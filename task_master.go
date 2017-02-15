@@ -21,6 +21,7 @@ import (
 	"github.com/influxdata/kapacitor/services/opsgenie"
 	"github.com/influxdata/kapacitor/services/pagerduty"
 	"github.com/influxdata/kapacitor/services/slack"
+	"github.com/influxdata/kapacitor/services/sensu"
 	"github.com/influxdata/kapacitor/services/smtp"
 	"github.com/influxdata/kapacitor/services/snmptrap"
 	"github.com/influxdata/kapacitor/services/telegram"
@@ -124,7 +125,7 @@ type TaskMaster struct {
 		Handler(alerta.HandlerConfig, *log.Logger) (alert.Handler, error)
 	}
 	SensuService interface {
-		Handler(*log.Logger) alert.Handler
+		Handler(sensu.HandlerConfig, *log.Logger) alert.Handler
 	}
 	TalkService interface {
 		Handler(*log.Logger) alert.Handler

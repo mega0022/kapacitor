@@ -21,6 +21,7 @@ import (
 	"github.com/influxdata/kapacitor/services/opsgenie"
 	"github.com/influxdata/kapacitor/services/pagerduty"
 	"github.com/influxdata/kapacitor/services/slack"
+	"github.com/influxdata/kapacitor/services/sensu"
 	"github.com/influxdata/kapacitor/services/smtp"
 	"github.com/influxdata/kapacitor/services/snmptrap"
 	"github.com/influxdata/kapacitor/services/storage"
@@ -105,7 +106,7 @@ type Service struct {
 		Handler(pagerduty.HandlerConfig, *log.Logger) alert.Handler
 	}
 	SensuService interface {
-		Handler(*log.Logger) alert.Handler
+		Handler(sensu.HandlerConfig, *log.Logger) alert.Handler
 	}
 	SlackService interface {
 		Handler(slack.HandlerConfig, *log.Logger) alert.Handler
@@ -1047,7 +1048,12 @@ func (s *Service) createHandlerActionFromSpec(spec HandlerActionSpec) (ha handle
 		h := NewPublishHandler(c, s.logger)
 		ha = newPassThroughHandler(h)
 	case "sensu":
-		h := s.SensuService.Handler(s.logger)
+		c := sensu.HandlerConfig{}
+		err = decodeOptions(spec.Options, &c)
+		if err != nil {
+			return
+		}
+		h := s.SensuService.Handler(c, s.logger)
 		ha = newPassThroughHandler(h)
 	case "slack":
 		c := slack.HandlerConfig{}

@@ -54,13 +54,16 @@ func (s *Service) Update(newConfig []interface{}) error {
 
 type testOptions struct {
 	Name   string      `json:"name"`
+	Source string      `json:"source"`
 	Output string      `json:"output"`
 	Level  alert.Level `json:"level"`
 }
 
 func (s *Service) TestOptions() interface{} {
+	c := s.config()
 	return &testOptions{
 		Name:   "testName",
+		Source: c.Source,
 		Output: "testOutput",
 		Level:  alert.Critical,
 	}
@@ -73,6 +76,7 @@ func (s *Service) Test(options interface{}) error {
 	}
 	return s.Alert(
 		o.Name,
+		o.Source,
 		o.Output,
 		o.Level,
 	)
@@ -104,7 +108,7 @@ func (s *Service) Alert(name, source, output string, level alert.Level) error {
 		return err
 	}
 	if string(resp) != "ok" {
-		return errors.New("sensu socket error: " + string(resp))
+		return errors.New("sensu socket error: " + source)
 	}
 	return nil
 }

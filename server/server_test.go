@@ -5924,7 +5924,7 @@ func TestServer_UpdateConfig(t *testing.T) {
 						Set: map[string]interface{}{
 							"addr":    "sensu.local:3000",
 							"enabled": true,
-							"source":  "",
+							"source":  "testsource",
 						},
 					},
 					expSection: client.ConfigSection{
@@ -5934,7 +5934,7 @@ func TestServer_UpdateConfig(t *testing.T) {
 							Options: map[string]interface{}{
 								"addr":    "sensu.local:3000",
 								"enabled": true,
-								"source":  "",
+								"source":  "testsource",
 							},
 							Redacted: nil,
 						}},
@@ -5944,7 +5944,7 @@ func TestServer_UpdateConfig(t *testing.T) {
 						Options: map[string]interface{}{
 							"addr":    "sensu.local:3000",
 							"enabled": true,
-							"source":  "",
+							"source":  "testsource",
 						},
 						Redacted: nil,
 					},
@@ -6526,6 +6526,7 @@ func TestServer_ListServiceTests(t *testing.T) {
 				Options: client.ServiceTestOptions{
 					"name":   "testName",
 					"output": "testOutput",
+					"source": "Kapacitor",
 					"level":  "CRITICAL",
 				},
 			},
@@ -6626,6 +6627,7 @@ func TestServer_ListServiceTests_WithPattern(t *testing.T) {
 				Name: "sensu",
 				Options: client.ServiceTestOptions{
 					"name":   "testName",
+					"source": "Kapacitor",
 					"output": "testOutput",
 					"level":  "CRITICAL",
 				},
